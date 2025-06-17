@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen pt-24">
+
+    <!-- Fixed Top Navbar -->
+    <nav class="bg-white fixed top-0 left-0 right-0 z-50 shadow-md p-4 flex items-center justify-between">
+        <div class="text-2xl font-bold text-blue-600 ml-4">Finance Tracker</div>
+    
+        <div class="flex items-center space-x-5 mr-4">
+            {% if user.is_authenticated %}
+                <!-- Dashboard -->
+                <a href="{% url 'dashboard' %}"
+                   class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-300 transform hover:scale-105">
+                    Dashboard
+                </a>
+                <!-- Transaction list -->
+                <a href="{% url 'transaction_list' %}"
+                   class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow hover:bg-orange-600 transition duration-300 transform hover:scale-105">
+                    Transaction
+                </a>
+    
+                <!-- Add Transaction -->
+                <a href="{% url 'transaction_add' %}"
+                   class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600 transition duration-300 transform hover:scale-105">
+                    Add Transaction
+                </a>
+                <a href="{% url 'goal_add' %}"
+                   class="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg shadow hover:bg-yellow-600 transition duration-300 transform hover:scale-105">
+                    Add Goal
+                </a>
+    
+                <!-- Logout -->
+                <a href="{% url 'logout' %}"
+                   class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow hover:bg-red-500 transition duration-300 transform hover:scale-105">
+                    Logout
+                </a>
+            {% else %}
+                <!-- Login -->
+                <a href="{% url 'login' %}"
+                   class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-md transition transform hover:scale-105 hover:shadow-xl">
+                    Login
+                </a>
+    
+                <!-- Register -->
+                <a href="{% url 'register' %}"
+                   class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg shadow-md transition transform hover:scale-105 hover:shadow-xl">
+                    Register
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    
+    
+
+    <!-- Page Content Block -->
+    <div class="flex items-center justify-center px-4">
+        {% block content %}
+        {% endblock content %}
+    </div>
+</body>
+</html>

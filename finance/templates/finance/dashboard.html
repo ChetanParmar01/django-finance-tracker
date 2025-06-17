@@ -1,0 +1,192 @@
+{% extends 'finance/base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="w-full px-2 sm:px-4 py-10 bg-gradient-to-br from-gray-100 via-white to-gray-50 space-y-14 min-h-screen animate-fade-in">
+
+  <!-- Welcome Section -->
+  <section class="flex flex-col gap-6 lg:gap-10">
+    <div class="flex items-start gap-4">
+      <!-- Avatar -->
+      <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-semibold shadow-lg scale-95 opacity-0 animate-fade-in">
+        {{ user.first_name|slice:":1"|default:user.username|slice:":1" }}
+      </div>
+      <!-- User Info -->
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Welcome, {{ user.get_full_name|default:user.username }}</h1>
+        <p class="text-sm text-gray-600 mt-2">📧 {{ user.email }}</p>
+        <p class="text-sm text-gray-600">👤 {{ user.username }}</p>
+        <p class="text-sm text-gray-600">📅 Joined on {{ user.date_joined|date:"F j, Y" }}</p>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <!-- Income -->
+      <div class="rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 text-white shadow-lg p-6 hover:shadow-2xl transform transition duration-300 hover:-translate-y-1">
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-xs uppercase tracking-wider font-medium">Income</p>
+            <p class="text-3xl font-bold mt-1">₹{{ total_income }}</p>
+          </div>
+          <div class="bg-white/20 p-2 rounded-full">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 8c.828 0 1.5.672 1.5 1.5S12.828 11 12 11s-1.5-.672-1.5-1.5S11.172 8 12 8zm0 5v5m0 0H8m4 0h4" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expense -->
+      <div class="rounded-xl bg-gradient-to-br from-rose-400 to-red-600 text-white shadow-lg p-6 hover:shadow-2xl transform transition duration-300 hover:-translate-y-1">
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-xs uppercase tracking-wider font-medium">Expense</p>
+            <p class="text-3xl font-bold mt-1">₹{{ total_expense }}</p>
+          </div>
+          <div class="bg-white/20 p-2 rounded-full">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 16c-.828 0-1.5-.672-1.5-1.5S11.172 13 12 13s1.5.672 1.5 1.5S12.828 16 12 16zm0-5V6m0 0h4m-4 0H8" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Net Saving -->
+      <div class="rounded-xl bg-gradient-to-br from-blue-400 to-sky-600 text-white shadow-lg p-6 hover:shadow-2xl transform transition duration-300 hover:-translate-y-1">
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-xs uppercase tracking-wider font-medium">Net Saving</p>
+            <p class="text-3xl font-bold mt-1">₹{{ net_saving }}</p>
+          </div>
+          <div class="bg-white/20 p-2 rounded-full">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M17 9V7a4 4 0 00-8 0v2m0 0v8m8-8v8m-4-4h.01" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- Goals Section -->
+{% if goals %}
+<section class="mt-10">
+  <h2 class="text-3xl font-bold text-indigo-800 mb-8 border-b pb-3 border-indigo-300">
+    🎯 Your Financial Goals
+  </h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    {% for goal in goals %}
+    <div class="p-6 rounded-2xl shadow-lg border border-gray-200 
+                bg-gradient-to-tr from-rose-100 via-orange-50 to-lime-100 
+                hover:shadow-xl transform hover:scale-[1.015] transition-all duration-300 ease-in-out">
+
+      <!-- Goal Title -->
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="text-lg font-semibold text-purple-800 leading-tight">{{ goal.name }}</h3>
+        <span class="text-xs font-semibold text-white bg-indigo-500 px-3 py-1 rounded-full shadow">
+          📅 {{ goal.deadline }}
+        </span>
+      </div>
+
+      <!-- Target -->
+      <p class="text-sm text-gray-800 mb-3 font-medium">🎯 Target Amount: ₹{{ goal.target_amount }}</p>
+
+      <!-- Status Message -->
+      {% if goal.status_message %}
+      <div class="mt-2 text-sm font-medium {% if goal.amount_needed > 0 %}text-yellow-700{% else %}text-green-700{% endif %}">
+        {{ goal.status_message }}
+      </div>
+      {% endif %}
+
+      <!-- Action Buttons -->
+      <div class="mt-6 flex flex-wrap gap-3 items-center">
+        {% if goal.completed %}
+        <span class="bg-green-200 text-green-900 text-xs font-semibold px-4 py-1.5 rounded-full shadow animate-pulse">
+          ✅ Goal Completed
+        </span>
+        {% else %}
+        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded shadow">
+          ⏳ Pending
+        </span>
+        <form action="{% url 'mark_goal_completed' goal.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit"
+            class="text-xs px-4 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200 shadow">
+            Mark as Completed
+          </button>
+        </form>
+        {% endif %}
+
+        <!-- Delete Button -->
+        <form action="{% url 'delete_goal' goal.id %}" method="post"
+          onsubmit="return confirm('Are you sure you want to delete this goal?');">
+          {% csrf_token %}
+          <button type="submit"
+            class="text-xs px-4 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 shadow">
+            Delete
+          </button>
+        </form>
+      </div>
+
+    </div>
+    {% endfor %}
+
+  </div>
+</section>
+{% endif %}
+
+
+
+
+
+  <!-- Transactions -->
+  <section>
+    <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-200">📒 Recent Transactions</h2>
+    {% if transactions %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-gray-800">
+        <thead class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
+          <tr>
+            <th class="py-3 px-4">Title</th>
+            <th class="py-3 px-4">Date</th>
+            <th class="py-3 px-4">Type</th>
+            <th class="py-3 px-4 text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for txn in transactions %}
+          <tr class="border-b hover:bg-gray-50 transition">
+            <td class="py-3 px-4">{{ txn.title }}</td>
+            <td class="py-3 px-4">{{ txn.date }}</td>
+            <td class="py-3 px-4">{{ txn.transaction_type }}</td>
+            <td class="py-3 px-4 text-right font-semibold {% if txn.transaction_type == 'Income' %}text-green-600{% else %}text-red-600{% endif %}">
+              ₹{{ txn.amount }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-center text-gray-500 mt-4">No transactions found.</p>
+    {% endif %}
+  </section>
+</div>
+
+<!-- Soft fade-in animation -->
+<style>
+  @keyframes fade-in {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+</style>
+{% endblock %}

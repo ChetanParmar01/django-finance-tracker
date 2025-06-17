@@ -1,0 +1,50 @@
+{% extends 'finance/base.html' %}
+{% block title %}Transaction List{% endblock %}
+
+{% block content %}
+<!-- Full width container with some horizontal padding and vertical padding -->
+<div >
+
+    <!-- Full width container (no max-width), just padding for content -->
+    <div class="w-screen p-2 bg-white shadow-xl border border-gray-200 py-10 -mt-4">
+
+        <h1 class="text-5xl font-extrabold mb-10 text-center text-blue-800 tracking-wide">Transaction List</h1>
+
+        {% if transaction %}
+        <div class="overflow-x-auto p-3 rounded-lg border border-gray-300 shadow-md">
+            <table class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-gradient-to-r from-blue-700 to-blue-500 text-white sticky top-0 z-10">
+                    <tr>
+                        <th class="px-8 py-4 text-left text-sm font-semibold uppercase tracking-wider">Title</th>
+                        <th class="px-8 py-4 text-left text-sm font-semibold uppercase tracking-wider">Amount (₹)</th>
+                        <th class="px-8 py-4 text-left text-sm font-semibold uppercase tracking-wider">Type</th>
+                        <th class="px-8 py-4 text-left text-sm font-semibold uppercase tracking-wider">Date</th>
+                        <th class="px-8 py-4 text-left text-sm font-semibold uppercase tracking-wider">Category</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for t in transaction %}
+                    <tr class="hover:bg-blue-50 transition duration-200">
+                        <td class="px-8 py-5 whitespace-nowrap font-semibold text-gray-900">{{ t.title }}</td>
+                        <td class="px-8 py-5 whitespace-nowrap text-gray-800 font-mono">₹{{ t.amount|floatformat:2 }}</td>
+                        <td class="px-8 py-5 whitespace-nowrap capitalize text-gray-800">{{ t.transaction_type }}</td>
+                        <td class="px-8 py-5 whitespace-nowrap text-gray-700">{{ t.date }}</td>
+                        <td class="px-8 py-5 whitespace-nowrap text-gray-700">{{ t.category }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-gray-600 mt-16 text-xl font-medium">No transactions found.</p>
+        {% endif %}
+
+        <div class="mt-12 flex justify-center">
+            <a href="{% url 'transaction_add' %}"
+               class="inline-block px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-lg font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 transition-transform transform hover:scale-105">
+                Add New Transaction
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
